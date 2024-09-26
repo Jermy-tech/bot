@@ -46,9 +46,10 @@ async def search_offset(name):
 async def search_prefix(prefix):
     return await fetch_data(PREFIX_API_URL + prefix)
 
-# Function to search for offsets by prefix
-async def search_game(id):
-    return await fetch_data(GAME_API_URL + id)
+async def search_game(game_id: int):
+    # Ensure the game_id is converted to a string when constructing the URL
+    url = f"{GAME_API_URL}{game_id}"  # This formats the URL correctly
+    return await fetch_data(url)
 
 # Function to fetch camera offsets
 async def fetch_camera_offsets():
@@ -304,7 +305,7 @@ async def count_command(interaction: discord.Interaction):
     count = len(exploits)
     await interaction.edit_original_response(content=f"Total exploits: {count}")
 
-@bot.tree.command(name="GetName", description="Get the name of a game from the ID")
+@bot.tree.command(name="getname", description="Get the name of a game from the ID")
 async def get_name(interaction: discord.Interaction, id: int):
     await interaction.response.send_message("Fetching game name...", ephemeral=True)
     
@@ -314,11 +315,21 @@ async def get_name(interaction: discord.Interaction, id: int):
         await interaction.edit_original_response(content="Failed to fetch game.")
         return
 
-    # Extract the game name from the returned game data
     game_name = game.get("gameName")  # Assuming 'game' is a dictionary
 
     if game_name:
-        await interaction.edit_original_response(content=f"Game Name: {game_name}")
+        # Create an embed for the game details
+        embed = discord.Embed(title="Game Fetched!", description=f"**Game Name:** {game_name}\n**Game ID:** {id}", color=discord.Color.blue())
+
+        # Create a button that links to the Roblox game
+        website_button = Button(label="Website", url=f"https://www.roblox.com/games/{id}/{game_name.replace(' ', '%20')}")
+
+        # Create a view to hold the button
+        view = View()
+        view.add_item(website_button)
+
+        # Send the embed with the button
+        await interaction.edit_original_response(embed=embed, view=view)
     else:
         await interaction.edit_original_response(content="Game name not found.")
 
