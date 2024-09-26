@@ -7,6 +7,8 @@ import asyncio
 import os
 import webserver
 
+os.environ['PORT'] = '8080'
+
 token = os.environ["discordtoken"]
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
