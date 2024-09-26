@@ -96,7 +96,52 @@ class ExploitView(View):
         )
         return embed
 
-# Other code remains unchanged...
+# View class for pagination of offset search results
+class OffsetView(View):
+    def __init__(self, offsets, page=0, max_per_page=10):
+        super().__init__(timeout=60)  # 60 seconds timeout for inactivity
+        self.offsets = offsets
+        self.page = page
+        self.max_per_page = max_per_page
+        self.update_buttons()
+
+    def update_buttons(self):
+        self.clear_items()
+        if self.page > 0:
+            back_button = Button(label="Back", style=discord.ButtonStyle.secondary, emoji="◀️")
+            back_button.callback = self.go_back
+            self.add_item(back_button)
+        if (self.page + 1) * self.max_per_page < len(self.offsets):
+            next_button = Button(label="Next", style=discord.ButtonStyle.secondary, emoji="▶️")
+            next_button.callback = self.go_forward
+            self.add_item(next_button)
+
+    async def go_back(self, interaction: discord.Interaction):
+        self.page -= 1
+        self.update_buttons()
+        await interaction.response.edit_message(embed=self.create_embed(), view=self)
+
+    async def go_forward(self, interaction: discord.Interaction):
+        self.page += 1
+        self.update_buttons()
+        await interaction.response.edit_message(embed=self.create_embed(), view=self)
+
+    def create_embed(self):
+        start = self.page * self.max_per_page
+        end = start + self.max_per_page
+        page_data = list(self.offsets.items())[start:end]
+
+        embed = discord.Embed(
+            title=f"Offsets - Page {self.page + 1}",
+            description="Here are the offsets retrieved from the API.",
+            color=discord.Color.blurple()
+        )
+
+        for key, value in page_data:
+            embed.add_field(name=key, value=f"`{value}`", inline=True)
+
+        embed.set_footer(text=f"Page {self.page + 1}/{(len(self.offsets) // self.max_per_page) + 1}")
+        return embed
 
 @bot.event
 async def on_ready():
