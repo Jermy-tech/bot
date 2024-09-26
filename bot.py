@@ -21,6 +21,7 @@ CAMERA_API_URL = "https://rbxstats.xyz/api/offsets/camera"
 LATEST_VERSION_API_URL = "https://rbxstats.xyz/api/versions/latest"
 FUTURE_VERSION_API_URL = "https://rbxstats.xyz/api/versions/future"
 EXPLOITS_API_URL = "https://rbxstats.xyz/api/exploits/"
+GAME_API_URL = "https://rbxstats.xyz/api/offsets/game/"
 
 # Function to fetch data with timeout
 async def fetch_data(url):
@@ -44,6 +45,10 @@ async def search_offset(name):
 # Function to search for offsets by prefix
 async def search_prefix(prefix):
     return await fetch_data(PREFIX_API_URL + prefix)
+
+# Function to search for offsets by prefix
+async def search_game(id):
+    return await fetch_data(GAME_API_URL + id)
 
 # Function to fetch camera offsets
 async def fetch_camera_offsets():
@@ -298,6 +303,24 @@ async def count_command(interaction: discord.Interaction):
 
     count = len(exploits)
     await interaction.edit_original_response(content=f"Total exploits: {count}")
+
+@bot.tree.command(name="GetName", description="Get the name of a game from the ID")
+async def get_name(interaction: discord.Interaction, id: int):
+    await interaction.response.send_message("Fetching game name...", ephemeral=True)
+    
+    game = await search_game(id)
+
+    if not game:
+        await interaction.edit_original_response(content="Failed to fetch game.")
+        return
+
+    # Extract the game name from the returned game data
+    game_name = game.get("gameName")  # Assuming 'game' is a dictionary
+
+    if game_name:
+        await interaction.edit_original_response(content=f"Game Name: {game_name}")
+    else:
+        await interaction.edit_original_response(content="Game name not found.")
 
 # Command to fetch the latest Roblox version
 @bot.tree.command(name="version", description="Get the latest Roblox version")
