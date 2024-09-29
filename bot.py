@@ -163,7 +163,7 @@ async def on_ready():
 # /offsets command - Get a list of 10 offsets at a time
 @bot.tree.command(name="offsets", description="Get a list of 10 offsets at a time")
 async def offsets_command(interaction: discord.Interaction):
-    await interaction.response.send_message("Loading offsets...", ephemeral=True)
+    await interaction.response.send_message("Loading offsets...")
     offsets = await fetch_offsets()
     if not offsets:
         await interaction.edit_original_response(content="Failed to fetch offsets.")
@@ -176,7 +176,7 @@ async def offsets_command(interaction: discord.Interaction):
 # /searchoffset command - Search for a specific offset by name
 @bot.tree.command(name="searchoffset", description="Search for a specific offset")
 async def searchoffset(interaction: discord.Interaction, offset_name: str):
-    await interaction.response.send_message(f"Searching for offset: {offset_name}...", ephemeral=True)
+    await interaction.response.send_message(f"Searching for offset: {offset_name}...")
     result = await search_offset(offset_name)
     if not result:
         await interaction.edit_original_response(content=f"Offset `{offset_name}` not found.")
@@ -196,7 +196,7 @@ async def searchoffset(interaction: discord.Interaction, offset_name: str):
 # /prefixoffset command - Search for offsets by prefix
 @bot.tree.command(name="prefixoffset", description="Search for offsets by prefix")
 async def prefixoffset(interaction: discord.Interaction, prefix: str):
-    await interaction.response.send_message(f"Searching for offsets starting with `{prefix}`...", ephemeral=True)
+    await interaction.response.send_message(f"Searching for offsets starting with `{prefix}`...")
     result = await search_prefix(prefix)
     if not result or len(result) == 0:
         await interaction.edit_original_response(content=f"No offsets found with prefix `{prefix}`.")
@@ -209,7 +209,7 @@ async def prefixoffset(interaction: discord.Interaction, prefix: str):
 # /camera command - Fetch and display camera offsets
 @bot.tree.command(name="camera", description="Get all camera-related offsets")
 async def camera_command(interaction: discord.Interaction):
-    await interaction.response.send_message("Fetching camera offsets...", ephemeral=True)
+    await interaction.response.send_message("Fetching camera offsets...")
     result = await fetch_camera_offsets()
     if isinstance(result, str) and result == "Offsets outdated, please wait for new offsets":
         await interaction.edit_original_response(content=result)
@@ -232,7 +232,7 @@ async def camera_command(interaction: discord.Interaction):
 
 # Exploit command handler with pagination
 async def handle_exploit_command(interaction: discord.Interaction, filter_type: str):
-    await interaction.response.send_message(f"Fetching exploits for {filter_type}...", ephemeral=True)
+    await interaction.response.send_message(f"Fetching exploits for {filter_type}...")
     exploits = await fetch_data(EXPLOITS_API_URL)
 
     if not exploits:
@@ -295,7 +295,7 @@ async def indev_command(interaction: discord.Interaction):
 # Command to get the count of all exploits
 @bot.tree.command(name="count", description="Get the count of all exploits")
 async def count_command(interaction: discord.Interaction):
-    await interaction.response.send_message("Fetching exploit count...", ephemeral=True)
+    await interaction.response.send_message("Fetching exploit count...")
     exploits = await fetch_data(EXPLOITS_API_URL)
 
     if not exploits:
@@ -307,8 +307,8 @@ async def count_command(interaction: discord.Interaction):
 
 @bot.tree.command(name="getname", description="Get the name of a game from the ID")
 async def get_name(interaction: discord.Interaction, id: int):
-    await interaction.response.send_message("Fetching game name...", ephemeral=True)
-    
+    await interaction.response.send_message("Fetching game name...")  # Removed ephemeral=True
+
     game = await search_game(id)
 
     if not game:
@@ -336,7 +336,7 @@ async def get_name(interaction: discord.Interaction, id: int):
 # Command to fetch the latest Roblox version
 @bot.tree.command(name="version", description="Get the latest Roblox version")
 async def version_command(interaction: discord.Interaction):
-    await interaction.response.send_message("Fetching latest version...", ephemeral=True)
+    await interaction.response.send_message("Fetching latest version...")
     latest_version = await fetch_data(LATEST_VERSION_API_URL)
 
     if not latest_version:
@@ -355,7 +355,7 @@ async def version_command(interaction: discord.Interaction):
 # Command to fetch the future Roblox version
 @bot.tree.command(name="futureversion", description="Get the future Roblox version")
 async def future_version_command(interaction: discord.Interaction):
-    await interaction.response.send_message("Fetching future version...", ephemeral=True)
+    await interaction.response.send_message("Fetching future version...")
     future_version = await fetch_data(FUTURE_VERSION_API_URL)
 
     if not future_version:
